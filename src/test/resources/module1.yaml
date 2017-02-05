@@ -1,0 +1,33 @@
+name: myModule
+types:
+    STATE:
+      values:
+        - ON
+        - OFF
+        - STANDBY
+ruleSets:
+    - name: my rule set
+      variables:
+        temperature: int
+        temperatureGoal: int
+        motion: real
+        brightness: real
+        state: STATE
+        stateOut: STATE
+      rules:
+        - name: rule 1
+          when: temperature > 23 && (motion < 0.3 || brightness < 0.1)
+          then:
+            stateOut: OFF
+        - name: rule 2
+          when: temperature < temperatureGoal && motion >= 0.3
+          then:
+              stateOut: ON
+        - name: rule 3
+          when: temperature >= temperatureGoal && motion < 0.1
+          then:
+              stateOut: state
+        - name: rule 4
+          when: temperature >= temperatureGoal && motion > 0.1
+          then:
+              stateOut: STANDBY
