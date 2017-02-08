@@ -63,6 +63,19 @@ ruleSets:
     state: "OFF"
     stateOut: "OFF"
   ruleOverlaps:
+---
+name: "myModule"
+ruleSets:
+- name: "my rule set"
+  complete: false
+  completenessCounterExample:
+    temperatureGoal: "1"
+    brightness: "0.0"
+    motion: "0.0"
+    temperature: "0"
+    state: "OFF"
+    stateOut: "OFF"
+  ruleOverlaps:
   - first:
       rule: "temperature > 23 && (motion < 0.3 || brightness < 0.1)"
       index: 0
@@ -76,7 +89,7 @@ ruleSets:
       temperature: "24"
       state: "OFF"
       stateOut: "OFF"
-    consistent: true
+    consistent: false
   - first:
       rule: "temperature > 23 && (motion < 0.3 || brightness < 0.1)"
       index: 0
@@ -104,5 +117,5 @@ ruleSets:
       temperature: "24"
       state: "OFF"
       stateOut: "OFF"
-    consistent: true
+    consistent: false
 ```
