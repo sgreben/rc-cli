@@ -6,11 +6,17 @@ public class RuleOverlapOutput {
     private IndexedRuleOutput first;
     private IndexedRuleOutput second;
     private Map<String, String> overlapExample;
+    private final boolean isConsistent;
 
-    public RuleOverlapOutput(IndexedRuleOutput first, IndexedRuleOutput second, Map<String, String> overlapExample) {
+    public boolean isConsistent() {
+        return isConsistent;
+    }
+
+    public RuleOverlapOutput(IndexedRuleOutput first, IndexedRuleOutput second, Map<String, String> overlapExample, boolean isConsistent) {
         this.first = first;
         this.second = second;
         this.overlapExample = overlapExample;
+        this.isConsistent = isConsistent;
     }
 
     public static class IndexedRuleOutput {

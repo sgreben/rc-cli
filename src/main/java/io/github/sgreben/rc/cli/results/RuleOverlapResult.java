@@ -45,7 +45,7 @@ public class RuleOverlapResult {
                             ruleOverlap.getSecond().rule.getSourceString(),
                             ruleOverlap.getSecond().index
                     );
-            RuleOverlapOutput ruleOverlapOutput = new RuleOverlapOutput(firstOutput, secondOutput, overlapExample);
+            RuleOverlapOutput ruleOverlapOutput = new RuleOverlapOutput(firstOutput, secondOutput, overlapExample, ruleOverlap.isConsistent());
             overlapsOutput.add(ruleOverlapOutput);
         }
         return new RuleOverlapResultOutput(overlapsOutput);

@@ -1,5 +1,7 @@
 package io.github.sgreben.rc.cli.outputs;
 
+import io.github.sgreben.rc.cli.results.ConstraintCheckResult;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ public class RuleSetCheckResultOutput {
     private boolean complete;
     private Map<String, String> completenessCounterExample;
     private List<RuleOverlapOutput> ruleOverlaps;
+    private List<ConstraintCheckResultOutput> constraints;
 
     public String getName() {
         return name;
@@ -39,5 +42,13 @@ public class RuleSetCheckResultOutput {
 
     public void setCompletenessCounterExample(Map<String, String> completenessCounterExample) {
         this.completenessCounterExample = completenessCounterExample;
+    }
+
+    public List<ConstraintCheckResultOutput> getConstraints() {
+        return constraints;
+    }
+
+    public void setConstraints(List<ConstraintCheckResultOutput> constraints) {
+        this.constraints = constraints;
     }
 }

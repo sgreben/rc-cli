@@ -9,10 +9,14 @@ import io.github.sgreben.rc.SolverException;
 import io.github.sgreben.rc.cli.outputs.ModuleCheckResultOutput;
 import io.github.sgreben.rc.cli.results.ModuleCheckResult;
 import io.github.sgreben.rc.declarations.ModuleDeclaration;
+import io.github.sgreben.rc.expressions.Expression;
+import io.github.sgreben.rc.parser.ExpressionParser;
 import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Main {
     private static DefaultParser optionsParser = new DefaultParser();
@@ -30,22 +34,56 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException, SolverException, ParseException {
-        CommandLine commandLine = optionsParser.parse(options, args);
+        try {
+            CommandLine commandLine = optionsParser.parse(options, args);
 
-        boolean printHelp = commandLine.hasOption("h") || commandLine.getArgs().length < 1;
-        if (printHelp) {
-            printHelp();
-            return;
+            if (commandLine.getArgs().length < 1) {
+                printHelp();
+                return;
+            }
+
+            if (commandLine.hasOption('h')) {
+                printHelp();
+                return;
+            }
+
+            File moduleDeclarationFile = new File(commandLine.getArgs()[0]);
+
+            List<String> ruleSetFilter = new LinkedList<>();
+            if (commandLine.hasOption("rs")) {
+                for(String ruleSet : commandLine.getOptionValues('c')) {
+                    ruleSetFilter.add(ruleSet);
+                }
+            }
+
+            List<String> constraints = new LinkedList<>();
+            if (commandLine.hasOption("c")) {
+                for(String constraint : commandLine.getOptionValues('c')) {
+                    constraints.add(constraint);
+                }
+            }
+
+
+            ModuleCheckResult checkResult = checkModuleDeclarationFile(moduleDeclarationFile, constraints, ruleSetFilter);
+
+            ModuleCheckResultOutput checkResultYaml = checkResult.compile();
+            printResult(checkResultYaml);
+
+        } catch (ParseException parseException) {
+            System.err.println( "Could not parse command line. Reason: " + parseException.getMessage() );
         }
+    }
 
-        File file = new File(commandLine.getArgs()[0]);
-        Context context = new Context();
-        ModuleDeclaration moduleDeclaration = ModuleDeclaration.load(file);
-        Module module = moduleDeclaration.compile(context);
-        ModuleCheckResult checkResult = ModuleChecker.check(module);
-        ModuleCheckResultOutput checkResultYaml = checkResult.compile();
+    private static void printResult(ModuleCheckResultOutput checkResultYaml) throws IOException {
         new ObjectMapper(new YAMLFactory())
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .writeValue(System.out, checkResultYaml);
+    }
+
+    private static ModuleCheckResult checkModuleDeclarationFile(File moduleDeclarationFile, List<String> constraints, List<String> ruleSetFilter) throws IOException, SolverException {
+        Context context = new Context();
+        ModuleDeclaration moduleDeclaration = ModuleDeclaration.load(moduleDeclarationFile);
+        Module module = moduleDeclaration.compile(context);
+        return ModuleChecker.check(context, module, constraints, ruleSetFilter);
     }
 }
